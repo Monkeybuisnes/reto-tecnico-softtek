@@ -1,0 +1,105 @@
+openapi: 3.0.0
+info:
+  title: Softtek Challenge API
+  version: 1.0.0
+  description: API para el reto técnico de Softtek
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor local
+  - url: https://xxxx.execute-api.us-east-1.amazonaws.com/dev
+    description: Servidor AWS
+
+paths:
+  /fusionados:
+    get:
+      summary: Obtiene datos fusionados de Star Wars y clima
+      responses:
+        '200':
+          description: Datos fusionados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  source:
+                    type: string
+                    description: Fuente de los datos (cache o api)
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Fusionado'
+  /almacenar:
+    post:
+      summary: Almacena datos personalizados
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Datos almacenados
+  /historial:
+    get:
+      summary: Obtiene historial de datos fusionados
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Número de página
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Límite de resultados por página
+      responses:
+        '200':
+          description: Historial paginado
+
+components:
+  schemas:
+    Fusionado:
+      type: object
+      properties:
+        name:
+          type: string
+        height:
+          type: number
+          nullable: true
+        mass:
+          type: number
+          nullable: true
+        homeworld:
+          type: string
+        birth_year:
+          type: string
+        weather:
+          $ref: '#/components/schemas/Clima'
+    Clima:
+      type: object
+      properties:
+        temperature:
+          type: number
+          nullable: true
+        humidity:
+          type: number
+          nullable: true
+        description:
+          type: string
+        windSpeed:
+          type: number
+          nullable: true
+        location:
+          type: string
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
