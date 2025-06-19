@@ -1,13 +1,13 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { getFusionados } from './handlers/fusionados';
+import { getFusionados } from './handlers/fusionhandler';
 import { postAlmacenar } from './handlers/almacenar';
 import { getHistorial } from './handlers/historial';
-import { apiLimiter } from './middleware/rateLimit';
+import { apiLimiter } from './middleware/rateLimits';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 import path from 'path';
-import { authenticate } from './middleware/auth';
+import { authenticate } from './middleware/authMiddleware';
 
 const app = express();
 app.use(bodyParser.json());

@@ -1,0 +1,11 @@
+{
+  "name": "Reto Backend Dev",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:0-20",
+  "postCreateCommand": "npm install",
+  "forwardPorts": [3000, 9229]
+//  "extensions": [
+//    "dbaeumer.vscode-eslint",
+//    "esbenp.prettier-vscode",
+//    "ms-azuretools.vscode-docker"
+//  ]
+}
