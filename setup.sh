@@ -3,7 +3,7 @@ set -e
 
 # 1. Clonar y entrar en carpeta
 if [ ! -d softtek-reto-backend ]; then
-  git clone <TU_REPO_URL> softtek-reto-backend
+  git clone <https://github.com/Monkeybuisnes/reto-tecnico-softtek> softtek-reto-backend
 fi
 cd softtek-reto-backend
 
