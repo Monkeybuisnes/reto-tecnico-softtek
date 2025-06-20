@@ -13,7 +13,6 @@ provider:
     JWT_SECRET: ${env:JWT_SECRET}
     REDIS_URL: ${env:REDIS_URL}
     DYNAMODB_TABLE: ${self:service}-${self:provider.stage}-FusionadosHistory
-    AWS_REGION: ${self:provider.region}
 
   # Permisos necesarios para que Lambda acceda a DynamoDB
   iamRoleStatements:
