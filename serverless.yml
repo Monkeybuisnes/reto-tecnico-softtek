@@ -41,8 +41,9 @@ functions:
           cors: true
 
 plugins:
-  - serverless-offline
   - serverless-esbuild
+  - serverless-offline
+  - serverless-dotenv-plugin
 
 custom:
   esbuild:
@@ -53,6 +54,7 @@ custom:
     target: 'node20'
     platform: 'node'
     concurrency: 10
+  testVariable: ${env:NODE_ENV}
 
 resources:
   Resources:
