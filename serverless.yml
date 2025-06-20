@@ -1,5 +1,12 @@
 service: softtek-reto-backend
 
+# El orden de los plugins es importante - serverless-dotenv-plugin debe ir primero
+# para que las variables estén disponibles cuando otros plugins las necesiten
+plugins:
+  - serverless-dotenv-plugin  # Debe ir PRIMERO
+  - serverless-offline
+  - serverless-esbuild
+
 provider:
   name: aws
   runtime: nodejs20.x
@@ -9,10 +16,12 @@ provider:
   timeout: 15
   environment:
     SWAPI_URL: https://swapi.dev/api
-    WEATHER_API_KEY: ${env:WEATHER_API_KEY}
-    JWT_SECRET: ${env:JWT_SECRET}
-    REDIS_URL: ${env:REDIS_URL}
+    # Ahora usamos valores por defecto seguros si las variables no existen
+    WEATHER_API_KEY: ${env:WEATHER_API_KEY, 'default_weather_key'}
+    JWT_SECRET: ${env:JWT_SECRET, 'default_jwt_secret_change_in_production'}
+    REDIS_URL: ${env:REDIS_URL, 'redis://localhost:6379'}
     DYNAMODB_TABLE: ${self:service}-${self:provider.stage}-FusionadosHistory
+    AWS_REGION: ${self:provider.region}
 
   iamRoleStatements:
     - Effect: Allow
@@ -29,11 +38,23 @@ functions:
       - http: ANY /
       - http: ANY /{proxy+}
 
-plugins:
-  - serverless-offline
-  - serverless-esbuild
-
 custom:
+  # Configuración específica para el plugin dotenv
+  dotenv:
+    # Especifica la ruta al archivo .env (por defecto busca en la raíz)
+    path: .env
+    # Especifica qué variables incluir explícitamente
+    include:
+      - WEATHER_API_KEY
+      - JWT_SECRET
+      - REDIS_URL
+    # Opcional: excluir variables específicas si necesario
+    # exclude:
+    #   - SOME_SENSITIVE_VAR
+    # Opcional: usar diferentes archivos según el stage
+    # basePath: './'
+    # logging: false  # Desactivar logs del plugin si necesario
+  
   esbuild:
     bundle: true
     minify: false
@@ -58,3 +79,12 @@ resources:
           - AttributeName: id
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+        # Opcional: agregar índices para mejorar las consultas
+        GlobalSecondaryIndexes:
+          - IndexName: CreatedAtIndex
+            KeySchema:
+              - AttributeName: createdAt
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            BillingMode: PAY_PER_REQUEST
